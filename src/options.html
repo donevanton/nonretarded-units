@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nonretarded-units settings</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="ui.css">
+  <style>
+    body { margin: 0; }
+    .hero { background: var(--brand-bg); color: var(--brand-fg); }
+    .hero-inner {
+      max-width: 680px; margin: 0 auto; padding: 28px 16px;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .hero img { width: 96px; height: 96px; border-radius: 50%; box-shadow: 0 0 0 3px var(--accent); flex: none; }
+    .hero h1 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+    .hero p { margin: 4px 0 0; opacity: .8; }
+
+    main { max-width: 680px; margin: 0 auto; padding: 8px 16px 48px; }
+    section { margin-top: 28px; }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+    .row + .row { border-top: 1px solid var(--line); }
+    .row .label { font-weight: 600; }
+    .row .sub { font-size: 13px; color: var(--muted); }
+    .row label.opt { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1; }
+    input[type=checkbox].box, input[type=radio] { width: 17px; height: 17px; accent-color: var(--accent); margin: 0; flex: none; }
+
+    .sites:empty::before { content: "None. Use the toolbar popup or add one below."; color: var(--muted); font-size: 13px; display: block; padding: 12px 0; }
+    .site { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+    .site + .site { border-top: 1px solid var(--line); }
+    .site button { padding: 4px 10px; font-size: 13px; }
+    form.add { display: flex; gap: 8px; padding: 12px 0; border-top: 1px solid var(--line); }
+    .sites:empty + form.add { border-top: none; padding-top: 0; }
+    form.add input {
+      flex: 1; min-width: 0; font: inherit; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+    }
+    form.add input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+
+    .about p { margin: 10px 0; }
+    .about code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: 13px; }
+    .about table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 6px 0 12px; }
+    .about td { padding: 5px 0; border-top: 1px solid var(--line); }
+    .about td:first-child { width: 45%; }
+    mark { background: rgba(255,196,0,.28); color: inherit; border-bottom: 1px dotted currentColor; border-radius: 3px; padding: 0 2px; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 12px);
+      background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 8px;
+      font-weight: 600; font-size: 13px; opacity: 0; transition: opacity .15s, transform .15s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 480px) {
+      .hero-inner { gap: 14px; }
+      .hero img { width: 64px; height: 64px; }
+      .hero h1 { font-size: 21px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-inner">
+      <img src="../icons/icon256.png" alt="">
+      <div>
+        <h1>nonretarded-units</h1>
+        <p>Converts imperial units on web pages to metric. Hover a converted value to see the original.</p>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section>
+      <h2>General</h2>
+      <div class="card">
+        <div class="row">
+          <div><div class="label">Enabled</div><div class="sub">Master switch for every site</div></div>
+          <label class="switch"><input type="checkbox" id="enabled"><span></span></label>
+        </div>
+        <div class="row">
+          <div><div class="label">Highlight converted values</div><div class="sub">Off keeps the metric value but hides the background (hover still works)</div></div>
+          <label class="switch"><input type="checkbox" id="highlight"><span></span></label>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Pints, quarts, gallons &amp; fl oz</h2>
+      <div class="card">
+        <div class="row">
+          <label class="opt"><input type="radio" name="volume" value="us">
+            <div><div class="label">US</div><div class="sub">1 gal = 3.785 L · 1 pint = 473.2 mL</div></div></label>
+        </div>
+        <div class="row">
+          <label class="opt"><input type="radio" name="volume" value="uk">
+            <div><div class="label">UK (imperial)</div><div class="sub">1 gal = 4.546 L · 1 pint = 568.3 mL</div></div></label>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Convert</h2>
+      <div class="card" id="dims"></div>
+    </section>
+
+    <section>
+      <h2>Turned off on these sites</h2>
+      <div class="card">
+        <div class="sites" id="sites"></div>
+        <form class="add" id="add">
+          <input id="newSite" placeholder="example.com" aria-label="Site to turn off" autocomplete="off" spellcheck="false">
+          <button type="submit">Add</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="about">
+      <h2>How it works</h2>
+      <div class="card">
+        <p>Values like <code>5 ft</code> become <mark>1.524 m</mark>. Hover one to see the original, the conversion rate, and a link back here.</p>
+        <table>
+          <tr><td>Exact if it fits in 4 digits</td><td><code>4 in</code> → 10.16 cm</td></tr>
+          <tr><td>Otherwise, same significant figures</td><td><code>12 oz</code> → 340 g</td></tr>
+          <tr><td>Temperature keeps decimal places</td><td><code>98.6°F</code> → 37.0 °C</td></tr>
+          <tr><td>Already has metric? Left alone</td><td><code>5 ft (1.5 m)</code></td></tr>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status">Saved</div>
+
+  <script src="settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>nonretarded-units demo</title>
+  <link rel="stylesheet" href="../src/content.css">
+  <style>
+    body { font: 16px/1.6 Georgia, serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+    .dark { background: #1e1e1e; color: #ddd; padding: 12px 16px; border-radius: 6px; }
+    button { font: inherit; }
+  </style>
+</head>
+<body>
+  <h1>nonretarded-units demo</h1>
+
+  <h2>Hiking</h2>
+  <p>The trail is 3 miles long and climbs 1,200 ft. Expect 5-10 mph winds and
+     temperatures around 72°F, dropping to 40 °F at night. The lake covers 250 acres.</p>
+
+  <h2>People</h2>
+  <p>He's 6'2" and weighs 185 lbs; his brother is 5 ft 11 in. The baby was 7 lb 4 oz.</p>
+
+  <h2>Recipe</h2>
+  <ul>
+    <li>1 1/2 cups flour</li>
+    <li>½ cup sugar</li>
+    <li>8 fl oz milk</li>
+    <li>12 oz chocolate</li>
+    <li>half a dozen eggs (or a dozen if they are small)</li>
+    <li>Bake at 350°F for 25 minutes in a 9 x 13 in pan.</li>
+  </ul>
+
+  <h2>Stuff</h2>
+  <p>A 27" monitor, a 10-foot ladder, a 2,000 sq ft house, a 2 gallon bucket,
+     a car that does 0 to 60 mph in 4.5 seconds.</p>
+
+  <div class="dark">
+    <p>Dark section: the room is 12 x 15 ft and the ceiling is 9.5 ft high.</p>
+  </div>
+
+  <h2>Should NOT change</h2>
+  <p>Born in 1990. There are 5 in the box. The board is 30 cm wide.
+     Already dual: 5 ft (1.5 m). Font size 12 pt.</p>
+  <pre>code block: 5 ft stays as-is</pre>
+  <textarea>textarea: 5 ft stays as-is</textarea>
+
+  <h2>Dynamic content</h2>
+  <button id="add">Add a paragraph</button>
+  <div id="dynamic"></div>
+
+  <script>
+    let i = 1;
+    document.getElementById("add").onclick = () => {
+      const p = document.createElement("p");
+      p.textContent = `Loaded later #${i}: a ${i * 3} mile run at ${60 + i}°F.`;
+      document.getElementById("dynamic").append(p);
+      i++;
+    };
+  </script>
+  <!-- standalone mode: load the extension scripts directly -->
+  <script src="../src/converter.js"></script>
+  <script src="../src/settings.js"></script>
+  <script src="../src/face-icon.js"></script>
+  <script src="../src/content.js"></script>
+  <script src="../src/bubble.js"></script>
+</body>
+</html>

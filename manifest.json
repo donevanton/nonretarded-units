@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "nonretarded-units",
+  "version": "0.4.0",
+  "description": "Finds imperial units on web pages and converts them to metric, showing the original on hover.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage", "activeTab"],
+  "action": {
+    "default_title": "nonretarded-units",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/converter.js", "src/settings.js", "src/face-icon.js", "src/content.js", "src/bubble.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  }
+}

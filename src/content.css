@@ -1,0 +1,18 @@
+/* nonretardedunits — highlight for converted values.
+   Semi-transparent so it reads on both light and dark sites. */
+.nru-conv {
+  background-color: rgba(255, 196, 0, 0.28) !important;
+  border-bottom: 1px dotted currentColor !important;
+  border-radius: 3px !important;
+  padding: 0 2px !important;
+  cursor: help !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+}
+
+/* "Highlight converted values" turned off in settings */
+.nru-plain .nru-conv {
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+}
