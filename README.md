@@ -1,5 +1,14 @@
 <img src="icons/icon128.png" width="96" align="right" alt="">
 
+The Mars Climate Orbiter was a robotic space probe launched by NASA on December 11, 1998, to study the Martian climate, atmosphere, and surface changes, and to serve as a communications relay for the Mars Polar Lander.
+
+Mission Failure
+
+• Date of loss: September 23, 1999
+• Cost: $125 million
+• Root cause: A critical unit conversion error where spacecraft builder Lockheed Martin supplied thruster force data in US customary (imperial) units (pound-force seconds), while NASA's Jet Propulsion Laboratory navigation software expected metric units (Newton-seconds).
+• Result: Because the calculations were off by a factor of 4.45, the probe entered the Martian atmosphere at an altitude of about 57 km instead of the planned 140–150 km, causing it to burn up or break apart in the atmosphere.
+
 # nonretarded-units
 
 A Chrome extension that finds imperial units on web pages and replaces them with metric, at the same precision. Converted values are highlighted; hover one to see the original, the conversion rate, and a link to the settings.
@@ -49,6 +58,19 @@ Open `tests/demo.html` in a browser to try the content script without installing
 | `src/settings.js` | Settings shared by all parts |
 | `src/popup.*`, `src/options.*` | Toolbar popup and settings page |
 | `src/background.js` | Opens the settings page, sets the toolbar badge |
+
+## Privacy
+
+nonretarded-units collects no data. All conversion happens locally in your browser; the extension makes no network requests. Your settings are stored with `chrome.storage.sync`, which only syncs through your own Chrome account.
+
+## Publishing
+
+```
+powershell -ExecutionPolicy Bypass -File tools\package.ps1      # -> dist/nonretarded-units-<version>.zip
+powershell -ExecutionPolicy Bypass -File tools\promo-tile.ps1   # -> store/promo-440x280.png
+```
+
+Copy-paste text for every Web Store field is in [store/listing.md](store/listing.md).
 
 ## License
 

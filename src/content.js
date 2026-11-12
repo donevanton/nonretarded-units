@@ -122,11 +122,7 @@
     const n = active ? document.querySelectorAll("." + CLS).length : 0;
     if (n === lastReported) return;
     lastReported = n;
-    try {
-      if (globalThis.chrome && chrome.runtime && chrome.runtime.id) {
-        chrome.runtime.sendMessage({ type: "nru-count", count: n });
-      }
-    } catch (_) { /* extension was reloaded */ }
+    globalThis.NruExt.send({ type: "nru-count", count: n });
   }
 
   // ---- dynamic content (infinite scroll, SPAs, lazy-loaded comments, …)

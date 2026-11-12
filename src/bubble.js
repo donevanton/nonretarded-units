@@ -12,14 +12,6 @@
   const MARGIN = 8;   // px from viewport edges
   const HIDE_DELAY = 250;
 
-  // portrait from src/face-icon.js; fall back to a ruler glyph if it's missing
-  const ICON = globalThis.__nruFaceIcon
-    ? `<img src="${globalThis.__nruFaceIcon}" width="22" height="22" alt="">`
-    : `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-        <rect x="2.5" y="7" width="19" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <path d="M6.5 7v4M10 7v2.5M13.5 7v4M17 7v2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>`;
-
   const STYLE = `
     :host { all: initial; }
     .b {
@@ -72,18 +64,37 @@
     host = document.createElement("nru-bubble");
     host.style.cssText = "all:initial;position:fixed;top:0;left:0;z-index:2147483647;display:none;";
     const root = host.attachShadow({ mode: "open" });
-    root.innerHTML = `<style>${STYLE}</style>
-      <div class="b" role="tooltip">
-        <div class="txt"><div class="orig"></div><div class="rate"></div></div>
-        <button type="button" title="nonretarded-units settings" aria-label="Open nonretarded-units settings">${ICON}</button>
-        <div class="arrow"></div>
-      </div>`;
-    box = root.querySelector(".b");
-    origEl = root.querySelector(".orig");
-    rateEl = root.querySelector(".rate");
-    arrowEl = root.querySelector(".arrow");
 
-    root.querySelector("button").addEventListener("click", (e) => {
+    // built with DOM calls rather than innerHTML (store reviewers flag innerHTML)
+    const el = (tag, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
+    const style = el("style");
+    style.textContent = STYLE;
+    box = el("div", "b");
+    box.setAttribute("role", "tooltip");
+    const txt = el("div", "txt");
+    origEl = el("div", "orig");
+    rateEl = el("div", "rate");
+    txt.append(origEl, rateEl);
+
+    const button = el("button");
+    button.type = "button";
+    button.title = "nonretarded-units settings";
+    button.setAttribute("aria-label", "Open nonretarded-units settings");
+    if (globalThis.__nruFaceIcon) {      // portrait from src/face-icon.js
+      const img = el("img");
+      img.src = globalThis.__nruFaceIcon;
+      img.width = img.height = 22;
+      img.alt = "";
+      button.append(img);
+    } else {
+      button.textContent = "⚙";
+    }
+
+    arrowEl = el("div", "arrow");
+    box.append(txt, button, arrowEl);
+    root.append(style, box);
+
+    button.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       openOptions();
@@ -95,12 +106,8 @@
   }
 
   function openOptions() {
-    try {
-      if (globalThis.chrome && chrome.runtime && chrome.runtime.id) {
-        chrome.runtime.sendMessage({ type: "nru-open-options" });
-        return;
-      }
-    } catch (_) { /* extension was reloaded; this page has a stale script */ }
+    const Ext = globalThis.NruExt;
+    if (Ext && Ext.api) { Ext.send({ type: "nru-open-options" }); return; }
     console.log("[nonretarded-units] settings page is only available when running as the extension");
   }
 

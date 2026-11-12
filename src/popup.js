@@ -2,9 +2,10 @@
 (async () => {
   "use strict";
   const S = globalThis.NruSettings;
+  const ext = globalThis.NruExt.api;
   const $ = (id) => document.getElementById(id);
 
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await ext.tabs.query({ active: true, currentWindow: true });
   let host = null;
   try {
     const url = new URL(tab.url);
@@ -38,17 +39,25 @@
   });
 
   $("options").addEventListener("click", () => {
-    chrome.runtime.openOptionsPage();
+    ext.runtime.openOptionsPage();
     window.close();
   });
 
   // the badge holds the per-tab count reported by the content script
   async function showCount() {
-    const text = await chrome.action.getBadgeText({ tabId: tab.id });
-    $("count").innerHTML = text
-      ? `<b>${text}</b> value${text === "1" ? "" : "s"} converted on this page.`
-      : host ? "Nothing to convert on this page." : "";
+    let text = "";
+    try { text = await ext.action.getBadgeText({ tabId: tab.id }); }
+    catch (_) { $("count").textContent = ""; return; } // no badges (Firefox for Android)
+    const p = $("count");
+    p.textContent = "";
+    if (text) {
+      const b = document.createElement("b");
+      b.textContent = text;
+      p.append(b, ` value${text === "1" ? "" : "s"} converted on this page.`);
+    } else if (host) {
+      p.textContent = "Nothing to convert on this page.";
+    }
   }
   showCount();
-  chrome.storage.onChanged.addListener(() => setTimeout(showCount, 400));
+  ext.storage.onChanged.addListener(() => setTimeout(showCount, 400));
 })();
